@@ -157,7 +157,7 @@ _2.1.6 Discrete vs. Continuous Attributes_
 
 1. **Similarity vs. Dissimilarity**:
    - **Similarity**: Measures how alike two objects are. A value of 1 indicates they are identical.
-   - **Dissimilarity**: Measures how different two objects are. A value of 0 means they are identical, and a higher value means they are more different.
+   - **Dissimilarity**: Measures how different two objects are. A value of 0 means objects are unalike, and a higher value means they are more similar.
 
 #### Data Structures
 
@@ -201,7 +201,7 @@ _2.1.6 Discrete vs. Continuous Attributes_
   - Composed of **data objects** that represent entities.
   - Described by **attributes** that can be nominal, binary, ordinal, or numeric.
 
-### Attribute Types
+#### Attribute Types
 
 - **Nominal Attributes**:
   - Represent categories or states (e.g., names, codes).
@@ -219,40 +219,62 @@ _2.1.6 Discrete vs. Continuous Attributes_
   - **Interval-scaled**: Measured in equal units without a true zero-point.
   - **Ratio-scaled**: Has a true zero-point, allowing meaningful ratios.
 
-### Statistical Descriptions
+#### Statistical Descriptions
 
 - Used for data summarization:
   - **Central Tendency**: Mean, weighted mean, median, mode.
   - **Dispersion**: Range, quartiles, variance, standard deviation.
 
-### Data Visualization
+#### Data Visualization
 
 - Techniques to display data:
   - **Pixel-oriented**, **geometric-based**, **icon-based**, or **hierarchical** methods.
   - Used to visualize both simple (e.g., relational data) and complex data (e.g., text, social networks).
 
-### Similarity and Dissimilarity
+#### Similarity and Dissimilarity
 
 - **Measures of proximity** are used in clustering, outlier analysis, and classification.
   - **Jaccard coefficient** for asymmetric binary attributes.
   - **Euclidean, Manhattan, Minkowski**, and **Supremum distances** for numeric attributes.
   - **Cosine similarity** and **Tanimoto coefficient** for sparse numeric data vectors.
 
-### 2.6 Exercises
+### Exercises
 
 #### 2.1
 Give three additional commonly used statistical measures that are not already illustrated in this chapter for the characterization of **data dispersion**. Discuss how they can be computed efficiently in large databases.
+
+- **coefficient of range**: $\frac{H-S}{H+S}$
+- **coefficient of variation**: $\left(\frac{\text{S.D.}}{\text{Mean}}\right) \times 100$
+- **coefficient of mean deviation**: $\frac{\text{Mean Deviation}}{\bar{X}}$
+- **coefficient of quartile deviation**: $\frac{Q_3-Q_1}{Q_3+Q_1}$
 
 #### 2.2
 Suppose that the data for analysis includes the attribute **age**. The age values for the data tuples are (in increasing order) 13, 15, 16, 16, 19, 20, 21, 22, 22, 25, 25, 25, 30, 33, 33, 35, 35, 35, 36, 40, 45, 46, 52, 70.
 
 - (a) What is the **mean** of the data? What is the **median**?
+  - **mean**: $31.6$
+  - **median**: $27.5$
 - (b) What is the **mode** of the data? Comment on the data’s modality (i.e., bimodal, trimodal, etc.).
+  - the dataset is bimodal
+  - the 2 modes of the dataset are $25$ and $35$ 
 - (c) What is the **midrange** of the data?
-- (d) Can you find (roughly) the first quartile (**Q1**) and the third quartile (**Q3**) of the data?
+  - the midrange of the dataset is $70 - 13 = 57$
+- (d) Can you find (roughly) the first quartile ($Q_1$) and the third quartile ($Q_3$) of the data?
+  - $Q_1$:
+    - is the value where 25% of the data is below it 
+    - since there are 24 data points, $25%$ of $24$ is $6$, so $Q_1=20$
+  - $Q_3=35$
 - (e) Give the **five-number summary** of the data.
+  - _minimum_ (smallest individial observations): $13$
+  - $Q_1$: $20$
+  - median: $27.5$
+  - $Q_3$: $35$
+  - _maximum_ (largest individia observations): $70$
 - (f) Show a **boxplot** of the data.
+  - ![image](./images/2.1.png)
 - (g) How is a **quantile–quantile plot** different from a **quantile plot**?
+  - a quantile-plot shows the distribution of data by plotting each data point against its percentile rank and is useful for identifying trends or unusual patterns in the data
+  - while the Q-Q plot compares the quantiles of two datasets to see if they come from the same distribution
 
 #### 2.3
 Suppose that the values for a given set of data are grouped into intervals. The intervals and corresponding frequencies are as follows:
@@ -266,8 +288,25 @@ Suppose that the values for a given set of data are grouped into intervals. The 
 | 51–80 | 700       |
 | 81–110| 44        |
 
-Compute an **approximate median** value for the data.
+Compute an **approximate median** value for the data
 
+- the formula for approximating the median when we have a large number of observations (numeric attributes):
+  - $L_1$: the **lower boundary** of the interval containing the median
+  - $N$: the total number of data points
+  - $\sum freq_l$: the **sum of frequencies** for all intervals **below** the median interval
+  - $freq_{median}$: the frequency of the median interval
+  - **width**: the width of the median interval (difference between the upper and lower bounds of the median interval)
+  - _solution_:
+    - calculate $N = 3194$
+    - the median (middle position) $= 1597$
+    - find the interval that contains this 1597th value by summing frequencies: $200 + 650 + 950 + 2450$, the 1597th value falls in the 4th interval (21-50), so this is the **median interval**
+    - apply the formula
+      - $L_1 = 21$
+      - $\frac{N}{2} = 1597$
+      - $\sum freq_l = 950$ (the sum of frequencies for all intervals below the median interval)
+      - $freq_{median} = 1500$ (the frequency of the median interval)
+      - width $= 50 - 21 = 29$ $\rightarrow$ median = approx. 33.51
+           
 #### 2.4
 Suppose that a hospital tested the age and body fat data for 18 randomly selected adults with the following results:
 
@@ -278,24 +317,56 @@ Suppose that a hospital tested the age and body fat data for 18 randomly selecte
 | %fat  | 34.6 | 42.5 | 28.8 | 33.4 | 30.2 | 34.1 | 41.2 | 35.7 |
 
 - (a) Calculate the **mean**, **median**, and **standard deviation** of **age** and **%fat**.
+  - break down of the variance formula
+    - $N$: the total number of data points
+    - $x_i$: each individual data points
+    - $\bar{x}$: the mean of the data points
+  - the **standard deviation** is just the square root of the variance
+
+|                    | age   | fat   |
+|--------------------|-------|-------|
+| mean               | 47.19 | 29.21 |
+| median             | 51    | 30.7  |
+| standard deviation | 11.93 | 9.15  |
+
 - (b) Draw the **boxplots** for **age** and **%fat**.
+
+  - ![box plots for age](./images/2.2.png)
+  
+  - ![box plots for fat](./images/2.3.png)
+
 - (c) Draw a **scatter plot** and a **q-q plot** based on these two variables.
+
+  - ![scatter plot](./images/2.4.png)
+ 
+  - ![q-q plot](./images/2.5.png)
 
 #### 2.5
 Briefly outline how to compute the dissimilarity between objects described by the following:
 
-- (a) **Nominal attributes**
-- (b) **Asymmetric binary attributes**
-- (c) **Numeric attributes**
-- (d) **Term-frequency vectors**
+- (a) **Nominal attributes**: the dissimilarity between 2 objects $i$ and j$j can be computed based on the ratio of mismatches $d(i,j)=\frac{p-m}{p}$
+  - $m$ is the number of matches
+  - $p$ is the total number of attributes describing the objects
+  - weights can be assigned to increase the effect of $m$ to assign greater weight to matches in attributes having a larger number of states  
+- (b) **Asymmetric binary attributes**: $d(i,j) = \frac{r + s}{q + r + s}$
+  - $r$ is the number of attributes that equal $1$ for object $i$ but equal $0$ for object $j$
+  - $s$ is the number of attributes that equal $0$ for object $i$ but equal $1$ for object $j$
+  - $t$ is the number of attributes that equal $0$ for both objects $i$ and $j$
+  - $q$ is the number of attributes that equal $1$ for both objects $i$ and $j$
+  - $p$ is the ttal number of attributes, where $p = q + r + s + t$
+- (c) **Numeric attributes**: the most popular distance measure is **Eucledian distance**. Let $i = (x_{i1}, x_{i2},...,x_{ip})$ and $j = (x_{j1}, x_{j2},..., x_{jp})$ be 2 objects described by $p$ numeric attributes. The Eucledian distance distance between objects $i$ and $j$ is defined as $d(i, j) = \sqrt{(x_{i1} - x_{j1})^2 + (x_{i2} - x_{j2})^2 + \dots + (x_{ip} - x_{jp})^2}$
+- (d) **Term-frequency vectors**: we can use **Cosine similarity**: $sim(x, y) = \frac{x \cdot y}{\|\|x\|\| \|\|y\|\|}$
+  - $\|\|x\|\|$is the Eucledian norm of vector $x$
+  - a cosine value of $0$ means that the 2 vectors are at 90 degrees to each other and have no match
+  - the closer the cosine value to $1$, the smaller the angle and the greater the match between vectors 
 
 #### 2.6
 Given two objects represented by the tuples (22, 1, 42, 10) and (20, 0, 36, 8):
 
-- (a) Compute the **Euclidean distance** between the two objects.
-- (b) Compute the **Manhattan distance** between the two objects.
-- (c) Compute the **Minkowski distance** between the two objects, using q = 3.
-- (d) Compute the **supremum distance** between the two objects.
+- (a) Compute the **Euclidean distance** between the two objects: $6.7$
+- (b) Compute the **Manhattan distance** between the two objects: $45$  
+- (c) Compute the **Minkowski distance** between the two objects, using q = 3: $6.15$ 
+- (d) Compute the **supremum distance** between the two objects: $6$
 
 #### 2.7
 The **median** is one of the most important holistic measures in data analysis. Propose several methods for **median approximation**. Analyze their respective complexity under different parameter settings and decide to what extent the real value can be approximated. Moreover, suggest a heuristic strategy to balance between accuracy and complexity and then apply it to all methods you have given.
@@ -316,6 +387,18 @@ Suppose we have the following 2-D data set:
 - (a) Consider the data as 2-D data points. Given a new data point, x = (1.4, 1.6) as a query, rank the database points based on similarity with the query using **Euclidean distance**, **Manhattan distance**, **supremum distance**, and **cosine similarity**.
 - (b) Normalize the data set to make the norm of each data point equal to 1. Use **Euclidean distance** on the transformed data to rank the data points.
 
+### Questions 
+
+- _How they can be computed efficiently in large databases?_ (exercise 2.1)
+- 
+
 
 ### Linkie 
-- the chapter starts on page 76 
+- the chapter starts on page 76
+- exercise 2.1 [reference](https://www.cuemath.com/data/measures-of-dispersion/)
+- the [link](https://www.imathas.com/stattools/boxplot.html) I used to draw the boxplot
+- [scatterplot](https://stats.blue/Stats_Suite/scatter_plot_maker.html) link
+- standard deviation [calculator](https://www.calculator.net/standard-deviation-calculator.html?numberinputs=23%2C+27%2C+27%2C+39%2C+41%2C+47%2C+49%2C+50%2C+52%2C+54%2C+54%2C+56%2C+57%2C+58%2C+60%2C+61&ctype=p&x=Calculate)
+- github markdown [table generator](https://www.tablesgenerator.com/markdown_tables#google_vignette)
+- [ ] exercise [2.8](https://www.youtube.com/watch?v=PzbZ52gy8Bc)
+- 
